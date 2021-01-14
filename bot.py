@@ -91,6 +91,8 @@ def generate_answer(*data):
 	coздание ссылки'''
 	if data[3]:
 		media_str = generate_media_answer(data[3])
+	else:
+		media_str = ''
 
 	if data[0] and data[1]:
 		answer_str = f'<a href="{data[0]}"><b>{data[2]}</b></a>\n{data[1]}'
@@ -164,6 +166,7 @@ def main():
 		try:
 			bot_obj.get_updates(offset_count)
 		except KeyError:
+			sleep(3)
 			continue
 			
 		last_update = bot_obj.get_last_update()
