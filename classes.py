@@ -11,6 +11,14 @@ import os
 cluster = MongoClient("mongodb+srv://telegrambotmaker:tj1324Ip5Kmnh76@cluster0.lhzjo.mongodb.net/telegrambot?retryWrites=true&w=majority")
 db = cluster['instagrambot']
 channels_collection = db['instagram_page_ids']
+# selenium
+op = webdriver.ChromeOptions()
+op.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+op.add_argument("--headless")
+op.add_argument("--no-sandbox")
+op.add_argument("--disable-dev-sh-usage")
+driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=op)
+
 
 def cut_post_id_from_url(post_link):
 	'''достать post_id из ссылки'''
@@ -76,14 +84,10 @@ class MongoHandler:
 class InstaPostParser:
 
 	def __init__(self, insta_id):
-		self.op = webdriver.ChromeOptions()
-		self.op.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-		self.op.add_argument("--headless")
-		self.op.add_argument("--no-sandbox")
-		self.op.add_argument("--disable-dev-sh-usage")
-		self.driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=self.op)
+		
 		#self.PATH = '/home/sergei/code/test/instatest/app/chromedriver'
 		#self.driver = webdriver.Chrome(self.PATH)
+		self.driver = driver
 		self.insta_id = insta_id
 		self.insta_id_url = f'https://bibliogram.art/u/{self.insta_id}'
 
