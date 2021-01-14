@@ -47,7 +47,7 @@ class MongoHandler:
 				return 'Limit exceeded (10)'
 		else:
 			data = {
-			'_id': self.chat_id, 
+			'_id': self.chat_id,
 			page_id: []
 			}
 			self.channels_collection.insert_one(data)
@@ -94,7 +94,7 @@ class InstaPostParser:
 		'''вытаскиваем 7 последних post_id'''
 		post_ids = []
 		try:
-			get_post_div = WebDriverWait(self.driver, 10).until(
+			get_post_div = WebDriverWait(self.driver, 20).until(
 				EC.presence_of_element_located((By.CSS_SELECTOR, ".timeline > section > div")))
 			for post_url in get_post_div.find_elements_by_tag_name('a')[:7]:
 				post_id = cut_post_id_from_url(post_url.get_attribute('href'))
@@ -106,7 +106,7 @@ class InstaPostParser:
 	def get_media(self, media_type):
 		media_list = []
 		try:
-			get_media = WebDriverWait(self.driver, 10).until(
+			get_media = WebDriverWait(self.driver, 20).until(
 				EC.presence_of_element_located((By.CSS_SELECTOR, '._97aPb.wKWK0')))
 			for element in get_media.find_elements_by_tag_name(media_type):
 				media_link = element.get_attribute('src')
@@ -119,7 +119,7 @@ class InstaPostParser:
 	def click_button(self):
 		'''переключить вложения поста'''
 		try:
-			button_next = WebDriverWait(self.driver, 10).until(
+			button_next = WebDriverWait(self.driver, 20).until(
 				EC.element_to_be_clickable((By.CSS_SELECTOR, ".EcJQs > ._6CZji")))
 			button_next.click()
 
@@ -155,7 +155,7 @@ class InstaPostParser:
 
 	def get_name(self):
 		try:
-			get_name = WebDriverWait(self.driver, 10).until(
+			get_name = WebDriverWait(self.driver, 20).until(
 				EC.presence_of_element_located((By.CSS_SELECTOR, ".C4VMK > h2")))
 			return get_name.find_element_by_tag_name('a').text
 		except:
@@ -163,7 +163,7 @@ class InstaPostParser:
 
 	def get_text(self):
 		try:
-			get_post_text = WebDriverWait(self.driver, 10).until(
+			get_post_text = WebDriverWait(self.driver, 20).until(
 				EC.presence_of_element_located((By.CSS_SELECTOR, ".C4VMK > span")))
 			return get_post_text.text
 		except:
