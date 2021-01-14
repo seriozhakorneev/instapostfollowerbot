@@ -165,7 +165,8 @@ def main():
 			bot_obj.get_updates(offset_count)
 		except KeyError:
 			continue
-			last_update = bot_obj.get_last_update()
+			
+		last_update = bot_obj.get_last_update()
 		
 		# проверка на новые сообщения
 		if last_update:
