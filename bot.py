@@ -160,9 +160,13 @@ def main():
 	offset_count = None
 
 	while True:
-
-		bot_obj.get_updates(offset_count)
-		last_update = bot_obj.get_last_update()
+		
+		try:
+			bot_obj.get_updates(offset_count)
+		except KeyError:
+			continue
+			last_update = bot_obj.get_last_update()
+		
 		# проверка на новые сообщения
 		if last_update:
 			global chat_id

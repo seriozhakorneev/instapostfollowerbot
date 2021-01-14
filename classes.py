@@ -76,14 +76,14 @@ class MongoHandler:
 class InstaPostParser:
 
 	def __init__(self, insta_id):
-		self.op = webdriver.ChromeOptions()
-		self.op.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-		self.op.add_argument("--headless")
-		self.op.add_argument("--no-sandbox")
-		self.op.add_argument("--disable-dev-sh-usage")
-		#self.PATH = '/home/sergei/code/test/instatest/app/chromedriver'
-		#self.driver = webdriver.Chrome(self.PATH)
-		self.driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=self.op)
+		#self.op = webdriver.ChromeOptions()
+		#self.op.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+		#self.op.add_argument("--headless")
+		#self.op.add_argument("--no-sandbox")
+		#self.op.add_argument("--disable-dev-sh-usage")
+		#self.driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=self.op)
+		self.PATH = '/home/sergei/code/test/instatest/app/chromedriver'
+		self.driver = webdriver.Chrome(self.PATH)
 		self.insta_id = insta_id
 		self.insta_id_url = f'https://bibliogram.art/u/{self.insta_id}'
 
