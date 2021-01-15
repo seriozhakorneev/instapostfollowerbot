@@ -97,6 +97,9 @@ def generate_answer(*data):
 	if data[0] and data[1]:
 		answer_str = f'<a href="{data[0]}"><b>{data[2]}</b></a>\n{data[1]}'
 		answer_str += '\n\n<b>media:</b>\n' + media_str
+	elif data[0] and data[2]:
+		answer_str = f'<a href="{data[0]}"><b>{data[2]}</b></a>'
+		answer_str += '\n\n<b>media:</b>\n' + media_str
 	elif data[0]:
 		answer_str = f'<a href="{data[0]}"><b>post</b></a>'
 		answer_str += '\n\n<b>media:</b>\n' + media_str
@@ -204,7 +207,7 @@ def main():
 
 			offset_count = update_id + 1
 	
-		sleep(5)
+		sleep(10)
 
 if __name__ == '__main__':
 	try:
