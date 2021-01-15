@@ -89,13 +89,13 @@ class InstaPostParser:
 	def get_to_url(self, link):
 		self.driver.get(link)
 
-	def get_first_7_post_ids(self):
+	def get_first_10_post_ids(self):
 		'''вытаскиваем 7 последних post_id'''
 		post_ids = []
 		try:
 			get_post_div = WebDriverWait(self.driver, 10).until(
 				EC.presence_of_element_located((By.CSS_SELECTOR, ".timeline > section > div")))
-			for post_url in get_post_div.find_elements_by_tag_name('a')[:7]:
+			for post_url in get_post_div.find_elements_by_tag_name('a')[:10]:
 				post_id = cut_post_id_from_url(post_url.get_attribute('href'))
 				post_ids.append(post_id)
 			return post_ids 

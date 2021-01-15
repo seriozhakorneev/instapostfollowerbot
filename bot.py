@@ -113,7 +113,7 @@ def send_insta_post_data(mongo_obj, username, user_data):
 	check_for_first_mailing = 0
 	inst_obj = InstaPostParser(username)
 	inst_obj.get_to_url(inst_obj.insta_id_url)
-	post_ids = inst_obj.get_first_7_post_ids()
+	post_ids = inst_obj.get_first_10_post_ids()
 	username = replace_dots_in_insta_username(username)
 
 	if len(user_data[username]) == 0:
