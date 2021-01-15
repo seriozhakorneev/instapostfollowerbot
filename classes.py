@@ -2,7 +2,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
 from pymongo import MongoClient
 import requests
 import os
@@ -81,10 +80,9 @@ class InstaPostParser:
 		self.op.add_argument("--headless")
 		self.op.add_argument("--no-sandbox")
 		self.op.add_argument("--disable-dev-sh-usage")
-		self.driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=self.op)
-		
 		#self.PATH = '/home/sergei/code/test/instatest/app/chromedriver'
-		#self.driver = webdriver.Chrome(self.PATH)
+		self.driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=self.op)
+		#self.driver = webdriver.Chrome(executable_path=self.PATH, options=self.op)
 		self.insta_id = insta_id
 		self.insta_id_url = f'https://bibliogram.art/u/{self.insta_id}'
 
@@ -95,7 +93,7 @@ class InstaPostParser:
 		'''вытаскиваем 7 последних post_id'''
 		post_ids = []
 		try:
-			get_post_div = WebDriverWait(self.driver, 20).until(
+			get_post_div = WebDriverWait(self.driver, 10).until(
 				EC.presence_of_element_located((By.CSS_SELECTOR, ".timeline > section > div")))
 			for post_url in get_post_div.find_elements_by_tag_name('a')[:7]:
 				post_id = cut_post_id_from_url(post_url.get_attribute('href'))
@@ -104,11 +102,27 @@ class InstaPostParser:
 		except:
 			return None
 
+	def get_name(self):
+		try:
+			get_name = WebDriverWait(self.driver, 10).until(
+				EC.presence_of_element_located((By.CSS_SELECTOR, ".user-header-inner")))
+			return get_name.find_element_by_tag_name('a').text
+		except:
+			return None
+			
+	def get_text(self):
+		try:
+			get_post_text = WebDriverWait(self.driver, 10).until(
+				EC.presence_of_element_located((By.CSS_SELECTOR, ".structured-text.description")))
+			return get_post_text.text
+		except:
+			return None
+
 	def get_media(self, media_type):
 		media_list = []
 		try:
-			get_media = WebDriverWait(self.driver, 20).until(
-				EC.presence_of_element_located((By.CSS_SELECTOR, '._97aPb.wKWK0')))
+			get_media = WebDriverWait(self.driver, 10).until(
+				EC.presence_of_element_located((By.CSS_SELECTOR, '.images-gallery')))
 			for element in get_media.find_elements_by_tag_name(media_type):
 				media_link = element.get_attribute('src')
 				media_list.append(media_link)
@@ -117,58 +131,20 @@ class InstaPostParser:
 
 		return media_list
 
-	def click_button(self):
-		'''переключить вложения поста'''
-		try:
-			button_next = WebDriverWait(self.driver, 20).until(
-				EC.element_to_be_clickable((By.CSS_SELECTOR, ".EcJQs > ._6CZji")))
-			button_next.click()
-
-			return button_next
-		except:
-			return None
-
 	def get_media_links(self):
 		media_links_list = []
 
-		button = self.click_button()
-		if button:
-
-			while button:
-				images = self.get_media('img')
-				videos = self.get_media('video')
-				media_links_list.extend(images)
-				media_links_list.extend(videos)
-				button = self.click_button()
-
-		else:
-			images = self.get_media('img')
-			videos = self.get_media('video')
-			media_links_list.extend(images)
-			media_links_list.extend(videos)
+		images = self.get_media('img')
+		videos = self.get_media('video')
+		media_links_list.extend(images)
+		media_links_list.extend(videos)
 
 		link_list = []
 		for link in media_links_list:
 			if (link not in link_list) and (link != None):
 				link_list.append(link)
 
-		return sorted(link_list, reverse=True)
-
-	def get_name(self):
-		try:
-			get_name = WebDriverWait(self.driver, 20).until(
-				EC.presence_of_element_located((By.CSS_SELECTOR, ".C4VMK > h2")))
-			return get_name.find_element_by_tag_name('a').text
-		except:
-			return None
-
-	def get_text(self):
-		try:
-			get_post_text = WebDriverWait(self.driver, 20).until(
-				EC.presence_of_element_located((By.CSS_SELECTOR, ".C4VMK > span")))
-			return get_post_text.text
-		except:
-			return None
+		return link_list
 
 	def close_browser(self):
 		self.driver.quit()

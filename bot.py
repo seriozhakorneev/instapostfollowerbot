@@ -121,12 +121,13 @@ def send_insta_post_data(mongo_obj, username, user_data):
 		for post_id in post_ids[check_for_first_mailing:]:
 			if post_id not in user_data[username]:
 				check_for_new_posts = True
-				post_link = f'https://www.instagram.com/p/{post_id}/'
-				inst_obj.get_to_url(post_link)
+				inst_post_link = f'https://www.instagram.com/p/{post_id}/'
+				bibl_post_link = f'https://www.bibliogram.art/p/{post_id}/'
+				inst_obj.get_to_url(bibl_post_link)
 				name = inst_obj.get_name()
 				text = inst_obj.get_text()
 				media_links = inst_obj.get_media_links()
-				new_post = generate_answer(post_link, text, name, media_links)
+				new_post = generate_answer(inst_post_link, text, name, media_links)
 				bot_obj.send_message(chat_id, new_post)
 					
 		if check_for_new_posts:
