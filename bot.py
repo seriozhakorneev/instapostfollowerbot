@@ -107,26 +107,29 @@ def generate_answer(*data):
 		answer_str = None
 	return answer_str
 
-def send_insta_post_data(mongo_obj, username, user_data):
+def send_insta_post_data(bot_obj, chat_id, username, current_post_ids):
 	'''отправить данные с постов'''
 	check_for_new_posts = False
 	check_for_first_mailing = 0
 	inst_obj = InstaPostParser(username)
 	inst_obj.get_to_url(inst_obj.insta_id_url)
-	post_ids = inst_obj.get_first_10_post_ids()
+	sleep(5)
+	new_post_ids = inst_obj.get_first_10_post_ids()
 	username = replace_dots_in_insta_username(username)
 
-	if len(user_data[username]) == 0:
+	if len(current_post_ids) == 0:
 		check_for_first_mailing = -1
 
-	if post_ids:
-		post_ids.reverse()
-		for post_id in post_ids[check_for_first_mailing:]:
-			if post_id not in user_data[username]:
+	if new_post_ids:
+		new_post_ids.reverse()
+		
+		for post_id in new_post_ids[check_for_first_mailing:]:
+			if post_id not in current_post_ids:
 				check_for_new_posts = True
 				inst_post_link = f'https://www.instagram.com/p/{post_id}/'
 				bibl_post_link = f'https://www.bibliogram.art/p/{post_id}/'
 				inst_obj.get_to_url(bibl_post_link)
+				sleep(10)
 				name = inst_obj.get_name()
 				text = inst_obj.get_text()
 				media_links = inst_obj.get_media_links()
@@ -134,32 +137,35 @@ def send_insta_post_data(mongo_obj, username, user_data):
 				bot_obj.send_message(chat_id, new_post)
 					
 		if check_for_new_posts:
-			mongo_obj.update_posts_list(username, post_ids)
+			mongo_obj = MongoHandler(chat_id)
+			mongo_obj.update_posts_list(username, new_post_ids)
 
 	inst_obj.close_browser()
 
-def send_insta_data(mongo_obj, bot_obj, chat_id):
+def send_insta_data(bot_obj, user):
 	'''достать данные с каждого	username'''
-	user_data = mongo_obj.find_user_data()
-	if user_data:
-		for username in user_data:
-			if username != '_id':
-				username = replace_dots_in_insta_username(username)
-				send_insta_post_data(mongo_obj, username, user_data)
+	chat_id = user['_id']
+	for username in user:
+		if username != '_id':
+			current_post_ids = user[username]
+			username = replace_dots_in_insta_username(username)
+			send_insta_post_data(bot_obj, chat_id, username, current_post_ids)
 				
 def thread_mailing(bot_obj):
 	'''рассылка постов'''
 	def run():
 		while True:
-			if chat_id and mongo_obj:
-				send_insta_data(mongo_obj, bot_obj, chat_id)
-				sleep(1200)# 20минут
+			mongo_obj = MongoHandler(1)
+			users = mongo_obj.find_all_users()
+			
+			for user in users:
+				send_insta_data(bot_obj, user)
+
+			sleep(1200)# 20минут
 
 	thread = threading.Thread(target=run)
 	thread.start()
 
-mongo_obj = None
-chat_id = None
 bot_obj = BotHandler()
 
 def main():
@@ -167,21 +173,14 @@ def main():
 
 	while True:
 		
-		try:
-			bot_obj.get_updates(offset_count)
-		except KeyError:
-			sleep(3)
-			continue
-			
+		bot_obj.get_updates(offset_count)		
 		last_update = bot_obj.get_last_update()
 		
 		# проверка на новые сообщения
 		if last_update:
-			global chat_id
 			update_id, chat_id, message = get_message_info(bot_obj, last_update)
 			# проверка сообщений на содержание только текста
 			if message:
-				global mongo_obj
 				mongo_obj = MongoHandler(chat_id)		
 				
 				if message == '/help':

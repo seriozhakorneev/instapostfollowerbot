@@ -27,6 +27,9 @@ class MongoHandler:
 		# номер пользователя в телеграм чате с ботом
 		self.chat_id = chat_id
 
+	def find_all_users(self):
+		return self.channels_collection.find()
+
 	def find_user_data(self):
 		'''получить данные юзера по _id'''
 		return self.channels_collection.find_one({'_id': self.chat_id})
