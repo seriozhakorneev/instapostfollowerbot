@@ -5,11 +5,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from pymongo import MongoClient
 import requests
 import os
+import sys
 
 # mongodb
-cluster = MongoClient("mongodb+srv://telegrambotmaker:tj1324Ip5Kmnh76@cluster0.lhzjo.mongodb.net/telegrambot?retryWrites=true&w=majority")
-db = cluster['instagrambot']
-channels_collection = db['instagram_page_ids']
+cluster = MongoClient("")
+db = cluster['']
+channels_collection = db['']
 
 def cut_post_id_from_url(post_link):
 	'''достать post_id из ссылки'''
@@ -83,9 +84,8 @@ class InstaPostParser:
 		self.op.add_argument("--headless")
 		self.op.add_argument("--no-sandbox")
 		self.op.add_argument("--disable-dev-sh-usage")
-		#self.PATH = '/home/sergei/code/test/instatest/app/chromedriver'
-		self.driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=self.op)
-		#self.driver = webdriver.Chrome(executable_path=self.PATH, options=self.op)
+		self.PATH = os.path.join(sys.path[0], 'chromedriver')
+		self.driver = webdriver.Chrome(executable_path=self.PATH, options=self.op)
 		self.insta_id = insta_id
 		self.insta_id_url = f'https://bibliogram.art/u/{self.insta_id}'
 
@@ -156,7 +156,7 @@ class BotHandler:
 
 	def __init__(self):
 		# telegram bot token
-		self.token = '1437349746:AAGzwB1DoMJzXA8c3vRi9Xmh2d6v6MO8x20'
+		self.token = ''
 		# telegram bot api
 		self.telegram_api_url = f"https://api.telegram.org/bot{self.token}/"
 
